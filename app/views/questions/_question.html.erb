@@ -1,0 +1,28 @@
+<div class="max-w-xl mx-auto bg-white rounded-lg shadow-md p-8 mb-8">
+  <%= form_with(model: question, local: true) do |form| %>
+    <% if question.errors.any? %>
+      <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
+        <h2 class="font-bold mb-2"><%= pluralize(question.errors.count, "エラー") %>があります:</h2>
+        <ul class="list-disc list-inside">
+          <% question.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <div class="mb-6">
+      <%= form.label :title, "タイトル", class: "block text-lg font-semibold mb-2 text-gray-700" %>
+      <%= form.text_field :title, class: "w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-300" %>
+    </div>
+
+    <div class="mb-8">
+      <%= form.label :description, "内容", class: "block text-lg font-semibold mb-2 text-gray-700" %>
+      <%= form.text_area :description, class: "w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-300", rows: 5 %>
+    </div>
+
+    <div class="text-center">
+      <%= form.submit "保存", class: "bg-purple-500 hover:bg-purple-600 text-white text-xl font-bold py-3 px-8 rounded-full transition" %>
+    </div>
+  <% end %>
+</div>
