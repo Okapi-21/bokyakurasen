@@ -1,0 +1,9 @@
+<div class="max-w-md mx-auto mt-16 p-8 bg-white rounded-lg shadow">
+  <div>
+    <h1 class="text-3xl font-bold text-purple-700 mb-8 text-center tracking-widest">アカウント登録</h1>
+  </div>
+  <%= render "shared/form", user: @user %>
+  <div class="mt-6 text-center">
+    <%= link_to "ログインページへ", login_path, class: "text-purple-500 hover:underline text-lg font-semibold" %>
+  </div>
+</div>
