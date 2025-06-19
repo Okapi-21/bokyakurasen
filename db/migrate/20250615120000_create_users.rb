@@ -5,7 +5,7 @@ class CreateUsers < ActiveRecord::Migration[7.0]
       t.string :crypted_password
       t.string :salt
       t.string :name,       null: false
-      
+
       t.timestamps                null: false
     end
   end
