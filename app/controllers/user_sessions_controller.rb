@@ -1,15 +1,17 @@
 class UserSessionsController < ApplicationController
     skip_before_action :require_login, only: %i[new create]
 
-    def new; end 
+    def new; end
 
     def create
         @user = login(params[:email], params[:password])
 
         if @user
-            redirect_to root_path
+            redirect_to root_path,
+            success: "ログインが完了しました"
         else
-            render :new
+            flash.now[:danger] = "ログインに失敗しました"
+            render :new, status: :unprocessable_entity
         end
     end
 
