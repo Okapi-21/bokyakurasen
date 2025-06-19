@@ -1,19 +1,19 @@
 <%= form_with(model: @user) do |f| %>
-    <div>
-        <%= f.label :name, class: "form-label" %>
-        <%= f.text_field :name, class: "form-control" %>
-    </div>
-    <div>
-        <%= f.label :email, class: "form-label" %>
-        <%= f.email_field :email, class: "form-control" %>
-    </div>
-    <div>
-        <%= f.label :password, class: "form-label" %>
-        <%= f.password_field :password, class: "form-control" %>
-    </div>
-    <div>
-        <%= f.label :password_confirmation, class: "form-label" %>
-        <%= f.password_field :password_confirmation, class: "form-control" %>
-    </div>
-    <%= f.submit "登録", class: "btn btn-primary" %>
+  <div>
+    <%= f.label :name, class: "block text-lg font-semibold mb-2 text-gray-700" %>
+    <%= f.text_field :name, class: "w-full px-4 py-2 border rounded text-base focus:outline-none focus:ring-2 focus:ring-purple-300" %>
+  </div>
+  <div>
+    <%= f.label :email, class: "block text-lg font-semibold mb-2 text-gray-700" %>
+    <%= f.email_field :email, class: "w-full px-4 py-2 border rounded text-base focus:outline-none focus:ring-2 focus:ring-purple-300" %>
+  </div>
+  <div>
+    <%= f.label :password, class: "block text-lg font-semibold mb-2 text-gray-700" %>
+    <%= f.password_field :password, class: "w-full px-4 py-2 border rounded text-base focus:outline-none focus:ring-2 focus:ring-purple-300" %>
+  </div>
+  <div>
+    <%= f.label :password_confirmation, class: "block text-lg font-semibold mb-2 text-gray-700" %>
+    <%= f.password_field :password_confirmation, class: "w-full px-4 py-2 border rounded text-base focus:outline-none focus:ring-2 focus:ring-purple-300" %>
+  </div>
+  <%= f.submit "登録", class: "w-full bg-purple-500 hover:bg-purple-600 text-white text-xl font-bold py-3 rounded-full transition mt-6" %>
 <% end %>

@@ -1,7 +1,11 @@
 <header>
-    <div class= "ph-2 px-3 bg-zinc-900">
-        <%= link_to '', class: "navbar-brand" do %>
-            <%= image_tag 'header_logo.png' %>
-        <% end %>
-    </div>
+  <div class="bg-zinc-900 flex items-center justify-between">
+    <%= link_to root_path, class: "navbar-brand" do %>
+      <%= image_tag 'header_logo.png', class: "my-3 mx-5 w-18 h-auto" %>
+    <% end %>
+    <!-- ハンバーガーメニュー -->
+    <button id="menu-button" class="focus:outline-none">
+      <%= image_tag 'menu_logo.png', class: "my-3 mx-5 w-13 h-auto" %>
+    </button>
+  </div>
 </header>
