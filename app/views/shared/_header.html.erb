@@ -1,11 +1,43 @@
 <header>
   <div class="bg-zinc-900 flex items-center justify-between">
     <%= link_to root_path, class: "navbar-brand" do %>
-      <%= image_tag 'header_logo.png', class: "my-3 mx-5 w-18 h-auto" %>
+      <%= image_tag 'header_logo.png', class: "my-3 mx-5 w-18 h-auto transition-transform duration-200 hover:scale-110 hover:bg-purple-100 rounded-full" %>
     <% end %>
     <!-- ハンバーガーメニュー -->
     <button id="menu-button" class="focus:outline-none">
-      <%= image_tag 'menu_logo.png', class: "my-3 mx-5 w-13 h-auto" %>
+      <%= image_tag 'menu_logo.png', class: "my-3 mx-5 w-13 h-auto transition-transform duration-200 hover:scale-110 hover:bg-purple-100 rounded-full" %>
     </button>
   </div>
+  <!-- メニュー本体 -->
+  <nav id="mobile-menu" class="hidden bg-zinc-800 text-white absolute right-0 top-16 w-48 rounded shadow-lg z-50">
+    <ul>
+     <% if current_user %> 
+      <li class="p-4 border-b border-zinc-700"><%= link_to "プロフィール", "#" %></li>
+      <li class="p-4 border-b border-zinc-700">
+        <%= link_to "ログアウト", logout_path, data: { turbo_method: :delete } %>
+      </li>
+    <% else %>
+      <li class="p-4 border-b border-zinc-700"><%= link_to "ログイン", login_path %></li>
+      <li class="p-4 border-b border-zinc-700"><%= link_to "新規登録", new_user_path %></li>
+    <% end %>
+    </ul>
+  </nav>
 </header>
+
+<!--ハンバーガーメニューを一時的に実装しているが、クリックをしても表示されたり、表示されなかったりすることがあるので修正が必要-->
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const btn = document.getElementById("menu-button");
+    const menu = document.getElementById("mobile-menu");
+    btn.addEventListener("click", function(event) {
+      menu.classList.toggle("hidden");
+      event.stopPropagation();
+    });
+    // メニュー以外をクリックしたら非表示
+    document.addEventListener("click", function(e) {
+      if (!menu.contains(e.target) && !btn.contains(e.target)) {
+        menu.classList.add("hidden");
+      }
+    });
+  });
+</script>
