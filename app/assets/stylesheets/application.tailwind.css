@@ -1,1 +1,11 @@
 @import "tailwindcss";
+
+@keyframes slow-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.slow-spin {
+    animation: slow-spin 40s linear infinite;
+}
