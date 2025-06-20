@@ -12,6 +12,7 @@ class QuestionsController < ApplicationController
 
     def new
         @question = current_user.questions.build
+        4.times { @question.choices.build }
     end
 
     def create
@@ -39,13 +40,16 @@ class QuestionsController < ApplicationController
 
     def destroy
         @question = current_user.questions.find(params[:id])
-        @question.destroy!
+        @question.destroy
         redirect_to questions_path, success: "問題を削除しました"
     end
 
     private
 
     def question_params
-        params.require(:question).permit(:title, :description)
+        params.require(:question).permit(
+            :title, :description,
+            choices_attributes: [ :id, :content, :is_correct, :_destroy ]
+            )
     end
 end

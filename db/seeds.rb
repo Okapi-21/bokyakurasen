@@ -19,5 +19,15 @@ user_ids = User.ids
 
 20.times do |index|
   user = User.find(user_ids.sample)
-  user.questions.create!(title: "タイトル#{index}", description: "本文#{index}")
+  question = user.questions.create!(
+    title: "タイトル#{index}",
+    description: "本文#{index}"
+  )
+  # 選択肢4つ作成（1つだけ正解）
+  4.times do |i|
+    question.choices.create!(
+      content: "選択肢#{i + 1}（問題#{index}）",
+      is_correct: i == 0 # 1つ目だけ正解
+    )
+  end
 end
