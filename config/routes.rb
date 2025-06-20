@@ -17,5 +17,5 @@ Rails.application.routes.draw do
   post "login", to: "user_sessions#create"
   delete "logout", to: "user_sessions#destroy"
 
-  resources :questions, only: %i[index show edit]
+  resources :questions, only: %i[index show edit new create destroy update]
 end
