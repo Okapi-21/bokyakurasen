@@ -44,6 +44,33 @@ class QuestionsController < ApplicationController
         redirect_to questions_path, success: "問題を削除しました"
     end
 
+    def start
+        @parent = Question.find(params[:id])
+        @children = @parent.children.order(:id)
+        session[:question_ids] = @children.pluck(:id)
+        session[:current_index] = 0
+        redirect_to solve_question_path(@parent, question_id: session[:question_ids][0])
+    end
+
+    def solve
+        @parent = Question.find(params[:id])
+        ids = session[:question_ids]
+        idx = session[:current_index]
+        @question = Question.find(ids[idx])
+    end
+
+    def answer
+        session[:current_index] += 1
+        if session[:current_index] < session[:question_ids].size
+            redirect_to solve_question_path(params[:id], question_id: session[:question_ids][session[:current_index]])
+        else
+            redirect_to result_question_path(params[:id])
+        end
+    end
+
+    def result
+    end
+
     private
 
     def question_params

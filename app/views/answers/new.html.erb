@@ -1,0 +1,14 @@
+<h2><%= @question.title %></h2>
+<p><%= @question.description %></p>
+
+<%= form_with(model: [@question, @answer], local: true) do |f| %>
+  <h3>選択肢</h3>
+  <% @question.choices.each do |choice| %>
+    <div>
+      <%= f.radio_button :choice_id, choice.id %>
+      <%= choice.content %>
+    </div>
+  <% end %>
+
+  <%= f.submit "回答する" %>
+<% end %>
