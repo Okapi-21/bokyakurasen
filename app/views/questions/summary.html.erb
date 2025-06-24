@@ -1,0 +1,28 @@
+<div class="flex flex-col items-center justify-center min-h-screen bg-gray-50">
+  <div class="w-full max-w-2xl bg-white rounded-xl shadow-lg p-8 border border-purple-100">
+    <h2 class="text-2xl font-bold mb-8 text-purple-700 text-center">チャレンジ結果まとめ</h2>
+    <table class="w-full mb-8 border-collapse">
+      <thead>
+        <tr>
+          <th class="py-3 px-4 bg-purple-100 text-purple-700 font-bold border-b">問題</th>
+          <th class="py-3 px-4 bg-purple-100 text-purple-700 font-bold border-b">あなたの選択</th>
+          <th class="py-3 px-4 bg-purple-100 text-purple-700 font-bold border-b">正誤</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @answers.each do |answer| %>
+          <tr class="hover:bg-purple-50 transition">
+            <td class="py-2 px-4 border-b"><%= answer.question.title %></td>
+            <td class="py-2 px-4 border-b"><%= answer.choice&.content %></td>
+            <td class="py-2 px-4 border-b font-bold text-center <%= answer.is_correct ? 'text-red-600' : 'text-blue-600' %>">
+              <%= answer.is_correct ? "○" : "×" %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+    <div class="flex justify-center">
+      <%= link_to "チャレンジ一覧に戻る", questions_path, class: "px-6 py-2 bg-purple-500 hover:bg-purple-600 text-white font-bold rounded-full shadow transition" %>
+    </div>
+  </div>
+</div>

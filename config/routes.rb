@@ -24,6 +24,7 @@ Rails.application.routes.draw do
       get :solve
       post :answer
       get :result
+      get :summary
     end
   end
 end
