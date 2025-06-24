@@ -1,0 +1,20 @@
+<div class="flex flex-col items-center justify-center min-h-screen bg-gray-50">
+  <div class="w-full max-w-xl bg-white rounded-xl shadow-lg p-8 border border-purple-100">
+    <h2 class="text-2xl font-bold mb-6 text-purple-700 text-center"><%= @question.title %></h2>
+    <p class="mb-4 text-lg text-gray-700 text-center">あなたの回答: <span class="font-semibold"><%= @choice.content %></span></p>
+    <p class="mb-6 text-xl text-center font-bold <%= @is_correct ? 'text-green-600' : 'text-red-600' %>">
+      <%= @is_correct ? "正解！" : "不正解" %>
+    </p>
+    <div class="bg-purple-50 rounded p-4 mb-6">
+      <h3 class="text-lg font-bold text-purple-600 mb-2">解説</h3>
+      <p class="text-gray-800"><%= @explanation %></p>
+    </div>
+    <div class="flex justify-center">
+      <% if @is_last %>
+        <%= link_to "総合結果を見る", summary_question_path(@question.parent_id), class: "px-6 py-2 bg-purple-500 hover:bg-purple-600 text-white font-bold rounded-full shadow transition"%>
+      <% else %>
+        <%= link_to "次の問題へ", solve_question_path(@parent, question_id: @next_question_id), class: "px-6 py-2 bg-purple-500 hover:bg-purple-600 text-white font-bold rounded-full shadow transition" %>
+      <% end %>
+    </div>
+  </div>
+</div>

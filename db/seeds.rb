@@ -8,26 +8,48 @@
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
 
-10.times do
-  User.create!(name: Faker::Name.name,
-              email: Faker::Internet.unique.email,
-              password: "password",
-              password_confirmation: "password")
+require 'faker'
+
+# まず全データをクリア
+Choice.delete_all
+Question.delete_all
+User.delete_all
+
+# ユーザーもダミーで作成
+users = 5.times.map do
+  User.create!(
+    name: Faker::Name.name,
+    email: Faker::Internet.unique.email,
+    password: "password",
+    password_confirmation: "password"
+  )
 end
 
-user_ids = User.ids
-
-20.times do |index|
-  user = User.find(user_ids.sample)
-  question = user.questions.create!(
-    title: "タイトル#{index}",
-    description: "本文#{index}"
+# 親（チャレンジ）を10個作成
+10.times do
+  parent = Question.create!(
+    title: Faker::Educator.course_name,
+    description: Faker::Lorem.paragraph,
+    user: users.sample
   )
-  # 選択肢4つ作成（1つだけ正解）
-  4.times do |i|
-    question.choices.create!(
-      content: "選択肢#{i + 1}（問題#{index}）",
-      is_correct: i == 0 # 1つ目だけ正解
+
+  # 各親チャレンジに子（問題）を5~8個ランダムで作成
+  rand(5..8).times do
+    child = Question.create!(
+      title: Faker::Educator.subject,
+      description: Faker::Lorem.sentence,
+      parent: parent,
+      user: users.sample,
+      explanation: Faker::Lorem.sentence
     )
+
+    # 各問題に4択の選択肢（正解は1つだけ）
+    correct_index = rand(0..3)
+    4.times do |i|
+      child.choices.create!(
+        content: Faker::Lorem.word,
+        is_correct: (i == correct_index)
+      )
+    end
   end
 end
