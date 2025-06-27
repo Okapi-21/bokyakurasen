@@ -19,14 +19,6 @@
     </div>
   </div>
 
-  <h3 class="text-lg font-bold mt-8 mb-2 text-gray-700">選択肢</h3>
-  <div id="choices" class="space-y-4">
-    <% @question.choices.each do |choice| %>
-      <div class="choice-fields flex items-center gap-4 bg-gray-50 rounded p-4 shadow-sm">
-        <span class="flex-1 px-3 py-2"><%= choice.content %></span>
-      </div>
-    <% end %>
-  </div>
 
   <div class="flex space-x-4 mb-6">
     <% if @question.user == current_user %>
