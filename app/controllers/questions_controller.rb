@@ -38,7 +38,7 @@ class QuestionsController < ApplicationController
     def update
         @question = current_user.questions.find(params[:id])
         if @question.update(question_params)
-            redirect_to @question, success: "問題を更新しました"
+            redirect_to questions_path, success: "問題を更新しました"
         else
             render :edit
         end
@@ -46,7 +46,7 @@ class QuestionsController < ApplicationController
 
     def destroy
         @question = current_user.questions.find(params[:id])
-        @question.destroy
+        @question.destroy!
         redirect_to questions_path, success: "問題を削除しました"
     end
 
@@ -125,8 +125,8 @@ class QuestionsController < ApplicationController
         params.require(:question).permit(
             :title, :description,
             children_attributes: [
-                :title, :description, :explanation,
-                choices_attributes: [ :content, :is_correct, :_destroy ]
+              :id, :title, :description, :explanation,
+                choices_attributes: [ :id, :content, :is_correct, :_destroy ]
             ]
         )
     end
