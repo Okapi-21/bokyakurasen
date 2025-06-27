@@ -21,7 +21,7 @@ gem "jbuilder"
 
 gem "cocoon"
 
-gem "sorcery", "0.16.3"
+gem "sorcery", "0.17.0"
 # Use Redis adapter to run Action Cable in production
 # gem "redis", ">= 4.0.1"
 
