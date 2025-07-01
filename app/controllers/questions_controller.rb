@@ -50,6 +50,10 @@ class QuestionsController < ApplicationController
         redirect_to questions_path, success: "問題を削除しました"
     end
 
+    def bookmarks
+        @bookmarked_questions = current_user.bookmarked_questions
+    end
+
     def start
         @parent = Question.find(params[:id])
         @children = @parent.children.order(:id)

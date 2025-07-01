@@ -19,6 +19,7 @@ Rails.application.routes.draw do
 
   resources :questions do
     resources :answers, only: %i[new create]
+    resources :bookmarks, only: [:create, :destroy]
     member do
       get :start
       get :solve
@@ -30,6 +31,4 @@ Rails.application.routes.draw do
       get :bookmarks
     end
   end
-
-  resources :bookmarks, only: %i[create destroy]
 end

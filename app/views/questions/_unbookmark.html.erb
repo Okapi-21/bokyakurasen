@@ -1,0 +1,7 @@
+<% bookmark = current_user.bookmarks.find_by(bookmarkable: question) %>
+<%= link_to question_bookmark_path(question, bookmark),
+            id: "bookmark-button-for-question-#{question.id}-#{bookmark.id}",
+            data: { turbo_method: :delete, turbo_confirm: t('defaults.delete_confirm') },
+            style: "display: inline-block; background: #fde68a; border-radius: 50%; padding: 10px; box-shadow: 0 2px 8px #fbbf24; transition: background 0.2s; text-align: center;" do %>
+  <i class="bi bi-star-fill" style="color: #f59e42; font-size: 1.4rem; vertical-align: middle;"></i>
+<% end %>
