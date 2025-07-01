@@ -19,12 +19,16 @@ Rails.application.routes.draw do
 
   resources :questions do
     resources :answers, only: %i[new create]
+    resources :bookmarks, only: [ :create, :destroy ]
     member do
       get :start
       get :solve
       post :answer
       get :result
       get :summary
+    end
+    collection do
+      get :bookmarks
     end
   end
 end
