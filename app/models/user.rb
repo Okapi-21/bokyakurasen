@@ -12,7 +12,7 @@ class User < ApplicationRecord
   has_many :bookmarks, dependent: :destroy
 
   # 追加：自分がブックマークしたQuestion一覧
-  has_many :bookmarked_questions, through: :bookmarks, source: :bookmarkable, source_type: 'Question'
+  has_many :bookmarked_questions, through: :bookmarks, source: :bookmarkable, source_type: "Question"
 
   def own?(question)
     question.user_id == self.id
@@ -29,5 +29,4 @@ class User < ApplicationRecord
   def bookmarked?(question)
     bookmarks.exists?(bookmarkable: question)
   end
-
 end
