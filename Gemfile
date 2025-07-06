@@ -21,7 +21,7 @@ gem "jbuilder"
 
 gem "cocoon"
 
-gem "sorcery", "0.16.3"
+# gem "sorcery", "0.16.3"
 # Use Redis adapter to run Action Cable in production
 # gem "redis", ">= 4.0.1"
 
@@ -36,6 +36,17 @@ gem "tzinfo-data", platforms: %i[ windows jruby ]
 
 # Reduces boot times through caching; required in config/boot.rb
 gem "bootsnap", require: false
+
+# .envファイルの読み込み
+gem "dotenv-rails"
+
+# Linebot機能追加
+gem "line-bot-api", "~> 1.20"
+
+# lineログイン機能
+gem "devise", "~> 4.9", ">= 4.9.4"
+gem "omniauth-line"
+gem "omniauth-rails_csrf_protection"
 
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 # gem "image_processing", "~> 1.2"

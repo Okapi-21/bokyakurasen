@@ -1,9 +1,9 @@
 class User < ApplicationRecord
-  authenticates_with_sorcery!
+  # Include default devise modules. Others available are:
+  # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
+  devise :database_authenticatable, :registerable,
+         :recoverable, :rememberable, :validatable, :omniauthable, omniauth_providers: [ :line ]
 
-  validates :password, length: { minimum: 5 }, if: -> { new_record? || changes[:crypted_password] }
-  validates :password, confirmation: true, if: -> { new_record? || changes[:crypted_password] }
-  validates :password_confirmation, presence: true, if: -> { new_record? || changes[:crypted_password] }
   validates :name, presence: true, length: { maximum: 255 }
   validates :email, presence: true, uniqueness: true
 
@@ -28,5 +28,13 @@ class User < ApplicationRecord
 
   def bookmarked?(question)
     bookmarks.exists?(bookmarkable: question)
+  end
+
+  def self.from_omniauth(auth)
+    where(provider: auth.provider, uid: auth.uid).first_or_create do |user|
+      user.email = auth.info.email.presence || "#{auth.uid}@line.com"
+      user.password = Devise.friendly_token[0, 20]
+      user.name = auth.info.name.presence || "LINEユーザー"
+    end
   end
 end
