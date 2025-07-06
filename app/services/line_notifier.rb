@@ -3,12 +3,12 @@ require "line/bot"
 class LineNotifier
   def self.send_message(line_user_id, message)
     client = Line::Bot::Client.new { |config|
-      config.channel_secret = ENV['LINE_CHANNEL_SECRET']
-      config.channel_token = ENV['LINE_CHANNEL_TOKEN']
+      config.channel_secret = ENV["LINE_CHANNEL_SECRET"]
+      config.channel_token = ENV["LINE_CHANNEL_TOKEN"]
     }
 
     message_params = {
-      type: 'text',
+      type: "text",
       text: message
     }
 

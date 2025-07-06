@@ -1,5 +1,4 @@
 class BookmarksController < ApplicationController
-
     def create
         @question = Question.find(params[:question_id])
         current_user.bookmark(@question)

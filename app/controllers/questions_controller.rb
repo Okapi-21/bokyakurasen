@@ -1,6 +1,6 @@
 class QuestionsController < ApplicationController
     # before_action :set_question, only: [:show, :edit, :update, :destroy]
-    #before_action :authenticate_user!
+    # before_action :authenticate_user!
 
     def index
         @parents = Question.where(parent_id: nil).includes(:user)
