@@ -12,7 +12,7 @@ class QuestionsController < ApplicationController
 
     def new
         @question = current_user.questions.build
-        2.times do
+        3.times do
             child = @question.children.build(user: current_user)
             4.times { child.choices.build }
         end

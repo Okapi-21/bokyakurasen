@@ -1,9 +1,9 @@
 <%= render "shared/error_messages", object: @question %>
 
 <%= form_with model: @question, local: true, class: "max-w-3xl mx-auto bg-white rounded-xl shadow-lg p-8 border border-purple-100" do |f| %>
-  <h2 class="text-xl font-bold mb-4 text-purple-600">親（チャレンジ）</h2>
+  <h2 class="text-xl font-bold mb-4 text-purple-600">問題集</h2>
   <div class="mb-4">
-    <%= f.label :title, "チャレンジ名", class: "block font-semibold text-gray-700 mb-1" %>
+    <%= f.label :title, "タイトル", class: "block font-semibold text-gray-700 mb-1" %>
     <%= f.text_field :title, class: "w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-300 box-border" %>
   </div>
   <div class="mb-8">
@@ -11,7 +11,7 @@
     <%= f.text_area :description, class: "w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-300 box-border" %>
   </div>
 
-  <h2 class="text-xl font-bold mb-4 text-purple-600">子（問題）</h2>
+  <h2 class="text-xl font-bold mb-4 text-purple-600">問題</h2>
   <%= f.fields_for :children do |cf| %>
     <div class="child-question mb-8 bg-gray-50 rounded-lg border border-purple-200 p-6 shadow-sm">
       <%= cf.label :title, "問題タイトル", class: "block font-semibold text-gray-700 mb-1" %>
@@ -38,6 +38,6 @@
   <% end %>
 
   <div class="flex justify-center">
-    <%= f.submit "親・子・選択肢まとめて作成", class: "px-8 py-2 bg-purple-500 hover:bg-purple-600 text-white font-bold rounded-full shadow transition" %>
+    <%= f.submit "問題集の作成", class: "px-8 py-2 bg-purple-500 hover:bg-purple-600 text-white font-bold rounded-full shadow transition" %>
   </div>
 <% end %>

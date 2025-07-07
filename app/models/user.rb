@@ -34,7 +34,8 @@ class User < ApplicationRecord
     where(provider: auth.provider, uid: auth.uid).first_or_create do |user|
       user.email = auth.info.email.presence || "#{auth.uid}@line.com"
       user.password = Devise.friendly_token[0, 20]
-      user.name = auth.info.name.presence || "LINEユーザー"
+      user.name = auth.info.name || "LINEユーザー"
+      user.line_user_id = auth.uid 
     end
   end
 end
