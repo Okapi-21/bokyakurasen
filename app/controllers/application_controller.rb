@@ -8,4 +8,9 @@ class ApplicationController < ActionController::Base
   def not_authenticated
     redirect_to new_user_session_path
   end
+
+  #ログイン後は問題一覧へ
+  def after_sign_in_path_for(resource)
+    questions_path  
+  end
 end
