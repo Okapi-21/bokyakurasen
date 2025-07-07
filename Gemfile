@@ -41,7 +41,7 @@ gem "bootsnap", require: false
 gem "dotenv-rails"
 
 # Linebot機能追加
-gem "line-bot-api", "~> 1.20"
+gem "line-bot-api", "~> 2.0"
 
 # lineログイン機能
 gem "devise", "~> 4.9", ">= 4.9.4"
