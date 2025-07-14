@@ -55,10 +55,15 @@ class QuestionsController < ApplicationController
     end
 
     def start
+        #Questionより、params[:id]と合致するものを検索し、@parentへ代入
         @parent = Question.find(params[:id])
+        #@parentの子要素を小さい順に@childrenへ代入
         @children = @parent.children.order(:id)
+        #子要素の問題数をセッションで保存しておく
         session[:question_ids] = @children.pluck(:id)
+        #最初の問題へ遷移するために :current_indexは0にする
         session[:current_index] = 0
+        #問題解答画面へ遷移する
         redirect_to solve_question_path(@parent, question_id: session[:question_ids][0])
     end
 
@@ -77,6 +82,7 @@ class QuestionsController < ApplicationController
     end
 
     def answer
+        #それぞれの問題、回答、正誤判断を記録する。（説明は一律なのでここで記録する必要はないかもしれない）
         @question = Question.find(params[:question_id])
         @choice = Choice.find(params[:choice_id])
         @is_correct = @choice.is_correct
@@ -98,10 +104,15 @@ class QuestionsController < ApplicationController
     end
 
     def result
+        # 回答した子問題（または問題）をIDで取得
         @question = Question.find(params[:id])
+        # ユーザーが選んだ選択肢をIDで取得
         @choice = Choice.find(params[:choice_id])
+        # パラメータで渡されたis_correct（"true"または"false"の文字列）を真偽値に変換して代入
         @is_correct = params[:is_correct] == "true"
+        # 問題の解説文をパラメータから取得
         @explanation = params[:explanation]
+        # 親問題（問題集）を取得。子問題ならその親を、親問題自身なら自分自身をセット
         @parent = @question.parent || @question
 
         # セッションから子問題IDリストと現在のインデックスを取得
@@ -111,15 +122,21 @@ class QuestionsController < ApplicationController
 
         # 次の子問題があればそのIDをセット、なければnil
         @next_question_id = ids[idx] if ids && idx && idx < total
+
+        # 最後の問題かどうかを判定
         @is_last = (idx >= total)
     end
 
     def summary
+        # 親問題（問題集）をIDで取得
         @parent = Question.find(params[:id])
-        # 各子問題ごとに最新の回答だけ取得
+        # 現在のユーザーがこの問題集で回答した全ての回答を取得
         answers = Answer.where(user: current_user, parent_question_id: @parent.id)
+        # 子問題ごとに回答をグループ化し、各子問題について一番新しい（最新の）回答だけを抜き出して配列にする
         @answers = answers.group_by(&:question_id).map { |_, v| v.max_by(&:created_at) }
+        # 子問題の数（＝最新回答の数）をカウント
         @total = @answers.count
+        # 最新回答のうち正解だったものの数をカウント
         @correct = @answers.count { |a| a.is_correct }
     end
 
