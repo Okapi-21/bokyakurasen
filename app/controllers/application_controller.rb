@@ -9,8 +9,8 @@ class ApplicationController < ActionController::Base
     redirect_to new_user_session_path
   end
 
-  #ログイン後は問題一覧へ
+  # ログイン後は問題一覧へ
   def after_sign_in_path_for(resource)
-    questions_path  
+    questions_path
   end
 end

@@ -1,6 +1,6 @@
 class QuestionsController < ApplicationController
     # before_action :set_question, only: [:show, :edit, :update, :destroy]
-    
+
 
     def index
         @parents = Question.where(parent_id: nil).includes(:user)
@@ -55,15 +55,15 @@ class QuestionsController < ApplicationController
     end
 
     def start
-        #Questionより、params[:id]と合致するものを検索し、@parentへ代入
+        # Questionより、params[:id]と合致するものを検索し、@parentへ代入
         @parent = Question.find(params[:id])
-        #@parentの子要素を小さい順に@childrenへ代入
+        # @parentの子要素を小さい順に@childrenへ代入
         @children = @parent.children.order(:id)
-        #子要素の問題数をセッションで保存しておく
+        # 子要素の問題数をセッションで保存しておく
         session[:question_ids] = @children.pluck(:id)
-        #最初の問題へ遷移するために :current_indexは0にする
+        # 最初の問題へ遷移するために :current_indexは0にする
         session[:current_index] = 0
-        #問題解答画面へ遷移する
+        # 問題解答画面へ遷移する
         redirect_to solve_question_path(@parent, question_id: session[:question_ids][0])
     end
 
@@ -82,7 +82,7 @@ class QuestionsController < ApplicationController
     end
 
     def answer
-        #それぞれの問題、回答、正誤判断を記録する。（説明は一律なのでここで記録する必要はないかもしれない）
+        # それぞれの問題、回答、正誤判断を記録する。（説明は一律なのでここで記録する必要はないかもしれない）
         @question = Question.find(params[:question_id])
         @choice = Choice.find(params[:choice_id])
         @is_correct = @choice.is_correct
