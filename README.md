@@ -91,13 +91,23 @@
 
 
 
-### 追加実施予定の機能
+### 機能の実装方針予定
 
 ------
 
-- [ ] カレンダーチャート機能
+- [ ] カレンダー機能
+
+  gem simple_calenderを使用し月のカレンダーを表示
 
 - [ ] AIチャット機能
 
-  
+  difyを利用し、チャット機能をつける
 
+- [ ] デプロイ
+  render or fly.io
+
+- [ ] LINE通知
+  LINE API を使用する
+
+- [ ] LINE認証
+  LINE API ＆ gem devise を使用
