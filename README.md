@@ -111,3 +111,6 @@
 
 - [ ] LINE認証
   LINE API ＆ gem devise を使用
+
+- [ ] DB
+  MySQL
