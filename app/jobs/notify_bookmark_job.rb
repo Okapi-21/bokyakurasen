@@ -8,4 +8,20 @@ class NotifyBookmarkJob < ApplicationJob
       BookmarkNotificationService.new(bookmark).notify_due_reminders
     end
   end
+
+  def perform(bookmark)
+    user = bookmark.user
+    Rails.logger.info "[NotifyBookmarkJob] start bookmark_id=#{bookmark.id} user_id=#{user.id} line_user_id=#{user.line_user_id.inspect}"
+
+    message = { type: 'text', text: "ブックマークが追加されました: #{bookmark.title}" }
+
+    begin
+      resp = line_client.push_message(user.line_user_id, message)
+      Rails.logger.info "[NotifyBookmarkJob] LINE push response: status=#{resp.code} body=#{resp.body}"
+    rescue => e
+      Rails.logger.error "[NotifyBookmarkJob] LINE push error: #{e.class}: #{e.message}"
+      Rails.logger.error e.backtrace.join("\n")
+      raise
+    end
+  end
 end
