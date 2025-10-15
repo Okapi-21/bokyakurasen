@@ -48,6 +48,8 @@ gem "devise", "~> 4.9", ">= 4.9.4"
 gem "omniauth-line"
 gem "omniauth-rails_csrf_protection"
 
+gem "whenever", require: false
+
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 # gem "image_processing", "~> 1.2"
 
