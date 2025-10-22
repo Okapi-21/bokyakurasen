@@ -280,7 +280,7 @@ Devise.setup do |config|
     Rails.logger.warn "LINE OmniAuth config: channel_id or channel_secret missing. Check credentials or ENV variables."
   end
 
-  config.omniauth :line, line_channel_id, line_channel_secret
+  config.omniauth :line, ENV['LINE_CHANNEL_ID'], ENV['LINE_CHANNEL_SECRET']
 
   # ==> Warden configuration
   # If you want to use other strategies, that are not supported by Devise, or
