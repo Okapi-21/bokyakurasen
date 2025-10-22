@@ -15,7 +15,7 @@ class BookmarkNotificationService
 
       if Time.current >= scheduled_time && !notified?(notification_number)
         resp = send_line_notification(notification_number)
-        if resp && resp.respond_to?(:code) && resp.code.to_i.between?(200,299)
+        if resp && resp.respond_to?(:code) && resp.code.to_i.between?(200, 299)
           record_notification(notification_number)
         else
           Rails.logger.error "[BookmarkNotificationService] notify failed for bookmark_id=#{@bookmark.id} notification_number=#{notification_number} resp=#{resp.inspect}"

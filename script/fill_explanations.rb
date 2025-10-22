@@ -21,11 +21,11 @@ templates = {
 parents.find_each do |parent|
   category_key = if parent.title =~ /git/i
                    'git'
-                 elsif parent.title =~ /docker/i
+  elsif parent.title =~ /docker/i
                    'docker'
-                 else
+  else
                    'rails'
-                 end
+  end
 
   parent.children.each do |q|
     # overwrite if explanation is empty, too short, or identical to title

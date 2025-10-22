@@ -3,9 +3,9 @@
 
 # Run notify batch job daily at 1:00 AM server time
 # Adjust the `environment` option to 'production' when deploying
-set :environment, ENV['RAILS_ENV'] || 'production'
+set :environment, ENV["RAILS_ENV"] || "production"
 
-every 1.day, at: '1:00 am' do
+every 1.day, at: "1:00 am" do
   runner "NotifyBookmarkBatchJob.perform_now"
 end
 
