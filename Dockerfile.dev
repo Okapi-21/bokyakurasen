@@ -14,3 +14,4 @@ RUN mkdir /myapp
 WORKDIR /myapp
 RUN gem install bundler
 COPY . /myapp
+ENV PATH="/myapp/node_modules/.bin:${PATH}"

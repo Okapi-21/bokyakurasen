@@ -15,6 +15,6 @@ class Question < ApplicationRecord
 
     accepts_nested_attributes_for :children, allow_destroy: true
     accepts_nested_attributes_for :choices, allow_destroy: true
-  # has_many :question_categories, dependent: :destroy
-  # has_many :categories, through: :question_categories
+  has_many :question_categories, dependent: :destroy
+  has_many :categories, through: :question_categories
 end

@@ -11,6 +11,6 @@ class ApplicationController < ActionController::Base
 
   # ログイン後は問題一覧へ
   def after_sign_in_path_for(resource)
-    questions_path
+  categories_path
   end
 end

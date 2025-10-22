@@ -1,0 +1,25 @@
+<h1 class="mb-4">カテゴリーを選択してください</h1>
+<div class="categories-grid">
+  <% @categories.each do |cat| %>
+    <div class="category-card">
+      <h2><%= link_to cat.name, category_path(cat) %></h2>
+      <p><%= truncate(cat.description.to_s, length: 120) %></p>
+      <div class="actions">
+        <%= link_to '一覧を見る', category_path(cat), class: 'btn' %>
+        <% first_q = cat.questions.where(parent_id: nil).order(:id).first %>
+        <% if first_q %>
+          <%= link_to 'このカテゴリを開始', start_question_path(first_q, category_id: cat.id), class: 'btn btn-primary' %>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</div>
+
+<style>
+.categories-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+.category-card { border: 1px solid #ddd; padding: 16px; border-radius: 8px; background: #fff; }
+.category-card h2 { margin: 0 0 8px 0; }
+.category-card .actions { margin-top: 12px; display:flex; gap:8px }
+.btn { padding:6px 10px; border:1px solid #ccc; border-radius:6px; background:#f7f7f7; color:#333; text-decoration:none }
+.btn-primary { background:#2b6cb0; color:#fff; border-color:#2b6cb0 }
+</style>

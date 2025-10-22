@@ -5,8 +5,9 @@
 # `$XDG_CONFIG_HOME/git/ignore` or `~/.config/git/ignore`
 
 # Ignore bundler config.
-/.bundle
+/.bundler
 config/settings.yml
+
 
 # Ignore all environment files (except templates).
 /.env*
@@ -34,8 +35,7 @@ config/settings.yml
 
 # Ignore master key for decrypting credentials and more.
 /config/master.key
-
-/app/assets/builds/*
+/app/assets/builds/
 !/app/assets/builds/.keep
 
 /node_modules

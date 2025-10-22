@@ -11,14 +11,14 @@ class NotifyBookmarkJob < ApplicationJob
       return
     end
 
-    message = { type: 'text', text: "ブックマークが追加されました: #{bookmark.title}" }
+    message = { type: "text", text: "ブックマークが追加されました: #{bookmark.title}" }
 
     begin
       # Use LineNotifier (HTTP wrapper) instead of SDK client
       resp = LineNotifier.send_message(user.line_user_id, message[:text])
       Rails.logger.info "[NotifyBookmarkJob] LINE push response: status=#{resp.try(:code)} body=#{resp.try(:body)}"
 
-      unless resp.code.to_i.between?(200,299)
+      unless resp.code.to_i.between?(200, 299)
         Rails.logger.error "[NotifyBookmarkJob] push failed: status=#{resp.code} body=#{resp.body}"
         # 必要ならここで raise して ActiveJob の retry_on を使う
       end
