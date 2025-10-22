@@ -272,14 +272,6 @@ Devise.setup do |config|
   # Add a new OmniAuth provider. Check the wiki for more information on setting
   # up on your models and hooks.
   # config.omniauth :github, 'APP_ID', 'APP_SECRET', scope: 'user,public_repo'
-  # Prefer encrypted credentials but fall back to environment variables for local dev
-  line_channel_id = ENV["LINE_CHANNEL_ID"] || Rails.application.credentials.dig(:line, :channel_id)
-  line_channel_secret = ENV["LINE_CHANNEL_SECRET"] || Rails.application.credentials.dig(:line, :channel_secret)
-
-  if line_channel_id.blank? || line_channel_secret.blank?
-    Rails.logger.warn "LINE OmniAuth config: channel_id or channel_secret missing. Check credentials or ENV variables."
-  end
-
   config.omniauth :line, ENV['LINE_CHANNEL_ID'], ENV['LINE_CHANNEL_SECRET']
 
   # ==> Warden configuration
