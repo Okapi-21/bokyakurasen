@@ -63,6 +63,8 @@ class QuestionsController < ApplicationController
         session[:question_ids] = @children.pluck(:id)
         # 最初の問題へ遷移するために :current_indexは0にする
         session[:current_index] = 0
+    # 選択したカテゴリIDをセッションに保存（あれば）
+    session[:selected_category_id] = params[:category_id] if params[:category_id].present?
         # 問題解答画面へ遷移する
         redirect_to solve_question_path(@parent, question_id: session[:question_ids][0])
     end
@@ -90,14 +92,21 @@ class QuestionsController < ApplicationController
 
         parent_id = @question.parent_id || @question.id
 
-        # summary画面の表示・ログのためにユーザー毎に回答記録保存
-        Answer.create!(
-            user: current_user,
-            question: @question,
-            choice: @choice,
-            is_correct: @is_correct,
-            parent_question_id: parent_id
-        )
+                # summary画面の表示・ログのためにユーザー毎に回答記録保存
+                anon_id = session[:anonymous_user_id]
+                unless anon_id.present?
+                    anon_id = SecureRandom.uuid
+                    session[:anonymous_user_id] = anon_id
+                end
+
+                Answer.create!(
+                        user: current_user,
+                        anonymous_id: (current_user ? nil : anon_id),
+                        question: @question,
+                        choice: @choice,
+                        is_correct: @is_correct,
+                        parent_question_id: parent_id
+                )
 
         session[:current_index] += 1
         redirect_to result_question_path(@question, choice_id: @choice.id, is_correct: @is_correct, explanation: @explanation)
@@ -130,8 +139,16 @@ class QuestionsController < ApplicationController
     def summary
         # 親問題（問題集）をIDで取得
         @parent = Question.find(params[:id])
-        # 現在のユーザーがこの問題集で回答した全ての回答を取得
-        answers = Answer.where(user: current_user, parent_question_id: @parent.id)
+                # 現在のユーザーがこの問題集で回答した全ての回答を取得
+                # logged-in user -> filter by user
+                # anonymous user -> filter by session[:anonymous_user_id]
+                if current_user
+                    answers = Answer.where(user: current_user, parent_question_id: @parent.id)
+                elsif session[:anonymous_user_id].present?
+                    answers = Answer.where(anonymous_id: session[:anonymous_user_id], parent_question_id: @parent.id)
+                else
+                    answers = Answer.none
+                end
         # 子問題ごとに回答をグループ化し、各子問題について一番新しい（最新の）回答だけを抜き出して配列にする
         @answers = answers.group_by(&:question_id).map { |_, v| v.max_by(&:created_at) }
         # 子問題の数（＝最新回答の数）をカウント

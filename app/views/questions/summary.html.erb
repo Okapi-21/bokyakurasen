@@ -22,7 +22,19 @@
       </tbody>
     </table>
     <div class="flex justify-center">
-      <%= link_to "チャレンジ一覧に戻る", questions_path, class: "px-6 py-2 bg-purple-500 hover:bg-purple-600 text-white font-bold rounded-full shadow transition" %>
+      <% selected_cat = session[:selected_category_id] %>
+      <% if selected_cat.present? %>
+        <%= link_to "カテゴリ内の一覧に戻る", category_path(selected_cat), class: "px-6 py-2 bg-purple-500 hover:bg-purple-600 text-white font-bold rounded-full shadow transition" %>
+      <% else %>
+        <%= link_to "チャレンジ一覧に戻る", questions_path, class: "px-6 py-2 bg-purple-500 hover:bg-purple-600 text-white font-bold rounded-full shadow transition" %>
+      <% end %>
+    </div>
+    <div class="mt-4 text-center">
+      <% total = @total || @answers.size %>
+      <% correct = @correct || @answers.count{|a| a.is_correct } %>
+      <% tweet_text = "チャレンジ『#{@parent.title}』の結果: #{correct}/#{total} 正解しました！ #%E3%83%9C%E3%82%AD%E3%83%A3%E3%82%AF%E3%83%A9%E3%82%BB%E3%83%B3" %>
+      <% tweet_url = "https://twitter.com/intent/tweet?text=" + ERB::Util.url_encode(tweet_text) + "&url=" + ERB::Util.url_encode(request.original_url) %>
+      <a href="<%= tweet_url %>" target="_blank" rel="noopener noreferrer" class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded">結果をXで共有</a>
     </div>
   </div>
 </div>
