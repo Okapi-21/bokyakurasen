@@ -9,8 +9,6 @@
 # Use this hook to configure devise mailer, warden hooks and so forth.
 # Many of these configuration options can be set straight in your model.
 Devise.setup do |config|
-  # Use secret key from ENV explicitly if provided (e.g., for API-only or containerized envs)
-  config.secret_key = ENV['DEVISE_SECRET_KEY'] if ENV['DEVISE_SECRET_KEY'].present?
   # The secret key used by Devise. Devise uses this key to generate
   # random tokens. Changing this key will render invalid all existing
   # confirmation, reset password and unlock tokens in the database.
@@ -274,28 +272,7 @@ Devise.setup do |config|
   # Add a new OmniAuth provider. Check the wiki for more information on setting
   # up on your models and hooks.
   # config.omniauth :github, 'APP_ID', 'APP_SECRET', scope: 'user,public_repo'
-  # OmniAuth (LINE) settings - explicitly pull from .env
-  line_channel_id     = ENV['LINE_CHANNEL_ID']
-  line_channel_secret = ENV['LINE_CHANNEL_SECRET']
-
-  # 開発で .env が未設定でも確実に localhost に固定できるようデフォルトを用意
-  line_callback_url =
-    if ENV['LINE_CALLBACK_URL'].present?
-      ENV['LINE_CALLBACK_URL']
-    elsif Rails.env.development?
-      "http://localhost:3000/users/auth/line/callback"
-    end
-
-  line_scope  = ENV['LINE_SCOPE'].presence  || 'profile openid'
-  line_prompt = ENV['LINE_PROMPT'].presence # 例: 'consent'
-
-  line_opts = {}
-  line_opts[:callback_url] = line_callback_url if line_callback_url
-  line_opts[:scope]        = line_scope
-  line_opts[:prompt]       = line_prompt if line_prompt
-
-  # 必須: .env のチャネルID/シークレットを使用
-  config.omniauth :line, line_channel_id, line_channel_secret, line_opts
+  config.omniauth :line, ENV['LINE_CHANNEL_ID'], ENV['LINE_CHANNEL_SECRET']
 
   # ==> Warden configuration
   # If you want to use other strategies, that are not supported by Devise, or
