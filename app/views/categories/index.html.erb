@@ -1,25 +1,94 @@
-<h1 class="mb-4">カテゴリーを選択してください</h1>
-<div class="categories-grid">
-  <% @categories.each do |cat| %>
-    <div class="category-card">
-      <h2><%= link_to cat.name, category_path(cat) %></h2>
-      <p><%= truncate(cat.description.to_s, length: 120) %></p>
-      <div class="actions">
-        <%= link_to '一覧を見る', category_path(cat), class: 'btn' %>
-        <% first_q = cat.questions.where(parent_id: nil).order(:id).first %>
-        <% if first_q %>
-          <%= link_to 'このカテゴリを開始', start_question_path(first_q, category_id: cat.id), class: 'btn btn-primary' %>
-        <% end %>
+<section class="category-hero">
+  <div class="hero-inner">
+    <h1>カテゴリーを選んでチャレンジしよう</h1>
+    <p class="lead">興味のあるカテゴリを選んで問題を始めてください。ログイン不要で挑戦できます。</p>
+  </div>
+</section>
+
+<section class="container">
+  <div class="grid">
+    <% @categories.each do |cat| %>
+      <article class="card link-card" aria-labelledby="cat-<%= cat.id %>-title">
+        <!-- カード全体クリックで一覧へ遷移するオーバーレイリンク -->
+        <%= link_to category_path(cat), class: 'card-overlay', aria: { label: "#{cat.name} の問題一覧へ" } do %><% end %>
+
+        <div class="card-top">
+          <div class="badge">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2l3 6 7 .6-5 4.6 1.8 7L12 17l-6.8 3.2L7 13 2 8.4 9 7.4 12 2z"/></svg>
+          </div>
+          <div class="meta">
+            <!-- タイトルはテキストのみ（内部リンクは外す：ネスト回避） -->
+            <h2 id="cat-<%= cat.id %>-title"><%= cat.name %></h2>
+            <div class="info"><%= pluralize(cat.questions.count, '問') %> ・ <%= truncate(cat.description.to_s, length: 100) %></div>
+          </div>
+        </div>
+
+        <p class="card-body"><%= truncate(strip_tags(cat.description.to_s), length: 220) %></p>
+      </article>
+    <% end %>
+  </div>
+</section>
+
+<!-- CTA: 問題作成（ページ下部に目立つセクションとして設置） -->
+<section class="create-cta">
+  <div class="container">
+    <div class="cta-inner">
+      <h3 class="cta-title">独自の問題を追加してコミュニティに貢献しましょう</h3>
+      <p class="cta-desc">ここに表示されるカテゴリとは別に、新しい問題を作成できます。カテゴリを選択して問題を作成してください。</p>
+      <div class="cta-actions">
+        <%= link_to '問題を作成する', new_question_path, class: 'btn btn-primary btn-lg' %>
       </div>
     </div>
-  <% end %>
-</div>
+  </div>
+</section>
 
 <style>
-.categories-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
-.category-card { border: 1px solid #ddd; padding: 16px; border-radius: 8px; background: #fff; }
-.category-card h2 { margin: 0 0 8px 0; }
-.category-card .actions { margin-top: 12px; display:flex; gap:8px }
-.btn { padding:6px 10px; border:1px solid #ccc; border-radius:6px; background:#f7f7f7; color:#333; text-decoration:none }
-.btn-primary { background:#2b6cb0; color:#fff; border-color:#2b6cb0 }
+:root{
+  --bg:#0f1724; --card:#ffffff; --muted:#6b7280; --accent:#2563eb; --glass:rgba(15,23,36,0.04);
+  --radius:12px;
+}
+*{box-sizing:border-box}
+body{background:#f6f8fb;color:#0b1220;font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial}
+.category-hero{background:linear-gradient(90deg,#eef2ff 0%, #fff 100%);padding:28px 0;border-bottom:1px solid var(--glass)}
+.hero-inner{max-width:1100px;margin:0 auto;padding:0 18px}
+.hero-inner h1{margin:0;font-size:1.5rem;color:#0b1220}
+.lead{margin-top:6px;color:var(--muted);font-size:0.95rem}
+
+.container{max-width:1100px;margin:28px auto;padding:0 18px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px}
+
+.card{background:var(--card);border-radius:var(--radius);padding:16px;box-shadow:0 6px 18px rgba(12,18,28,0.06);display:flex;flex-direction:column;transition:transform .12s,box-shadow .12s}
+.card:hover{transform:translateY(-6px);box-shadow:0 12px 30px rgba(12,18,28,0.08)}
+.card-top{display:flex;gap:12px;align-items:center;margin-bottom:8px}
+.badge{width:48px;height:48px;border-radius:10px;background:linear-gradient(180deg,#eef2ff,#e6f0ff);display:flex;align-items:center;justify-content:center;color:var(--accent)}
+.meta h2{margin:0;font-size:1.05rem}
+.info{color:var(--muted);font-size:0.9rem;margin-top:6px}
+
+.card-body{flex:1;color:#111827;margin:8px 0;font-size:0.95rem}
+
+/* カード全体をクリック可能にする */
+.link-card{position:relative; cursor:pointer}
+.card-overlay{
+  position:absolute; inset:0; display:block; border-radius:var(--radius);
+  z-index:1; /* カード全体をクリック可能にする */
+  /* 視覚に影響しない透明なリンク */
+  background: transparent;
+}
+.card-overlay:focus{outline:none}
+.card-overlay:focus-visible{outline:3px solid rgba(37,99,235,0.6); border-radius:var(--radius)}
+
+/* CTA styles */
+.create-cta{background:linear-gradient(90deg,#fff8e6 0%, #fff 100%);padding:28px 0;margin-top:32px;border-radius:12px}
+.create-cta .cta-inner{max-width:1100px;margin:0 auto;padding:18px;text-align:center}
+.cta-title{margin:0;font-size:1.25rem;color:#b45309;font-weight:700}
+.cta-desc{color:#92400e;margin-top:8px}
+.cta-actions{margin-top:12px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:10px;border:1px solid transparent;text-decoration:none;font-weight:600;cursor:pointer;font-size:0.95rem}
+.btn-primary{background:var(--accent);color:#fff;box-shadow:0 6px 18px rgba(37,99,235,0.12)}
+.btn-lg{padding:12px 20px;border-radius:14px;font-size:1rem}
+
+/* responsive */
+@media (max-width:700px){
+  .hero-inner h1{font-size:1.25rem}
+}
 </style>

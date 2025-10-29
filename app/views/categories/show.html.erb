@@ -1,60 +1,141 @@
-<div class="category-header">
-  <div class="breadcrumb">
-    <%= link_to 'ホーム', root_path %> ＞ <%= link_to 'カテゴリ', categories_path %> ＞ <span><%= @category.name %></span>
-  </div>
+<div class="category-hero">
+  <div class="hero-inner">
+    <nav class="breadcrumb">
+      <%= link_to 'ホーム', root_path %>
+      <span class="sep">›</span>
+      <%= link_to 'カテゴリ', categories_path %>
+      <span class="sep">›</span>
+      <span class="current"><%= @category.name %></span>
+    </nav>
 
-  <div class="header-main">
-    <h1><%= @category.name %></h1>
-    <p class="lead"><%= simple_format(@category.description.to_s) %></p>
-    <div class="header-actions">
-      <% first_q = @questions.first %>
-      <% if first_q %>
-        <%= link_to 'このカテゴリを開始', start_question_path(first_q, category_id: @category.id), class: 'btn btn-primary large' %>
-      <% end %>
-      <%= link_to '戻る', categories_path, class: 'btn' %>
+    <div class="hero-main">
+      <div class="meta">
+        <h1 class="title"><%= @category.name %></h1>
+        <p class="subtitle"><%= simple_format(@category.description.to_s) %></p>
+      </div>
+
+      <div class="actions">
+        <% first_q = @questions.first %>
+        <%= link_to categories_path, class: 'btn ghost' do %>
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M10 6l-4 6 4 6V6zM14 6v12l4-6-4-6z"/></svg>
+          カテゴリ一覧へ戻る
+        <% end %>
+      </div>
     </div>
   </div>
 </div>
 
-<div class="category-stats">
-  <span>問題数: <strong><%= @questions.size %></strong></span>
-  <!-- placeholder for filters/tags in future -->
-</div>
+<section class="container">
+  <div class="stats">
+    <div class="count">問題数 <strong><%= @questions.size %></strong></div>
+  </div>
 
-<div class="question-grid">
-  <% @questions.each do |q| %>
-    <article class="question-card">
-      <header>
-        <h3><%= link_to q.title, question_path(q) %></h3>
-      </header>
-      <section class="excerpt">
-        <%= truncate(strip_tags(q.description.to_s), length: 220) %>
-      </section>
-      <footer class="meta">
-        <small>作成者: <%= q.user.name %></small>
-        <div class="card-actions">
-          <%= link_to '詳細', question_path(q), class: 'btn' %>
-          <%= link_to 'この問題から始める', start_question_path(q, category_id: @category.id), class: 'btn btn-primary' %>
+  <div class="grid">
+    <% @questions.each do |q| %>
+      <article class="card link-card" aria-labelledby="q-<%= q.id %>-title">
+        <!-- カード全体クリックで問題解答を開始 -->
+        <%= link_to start_question_path(q, category_id: @category.id), class: 'card-overlay', aria: { label: "#{q.title} を開始" } do %><% end %>
+
+        <header class="card-head">
+          <div class="avatar"><%= q.user&.name.to_s[0]&.upcase || "?" %></div>
+          <div class="head-info">
+            <!-- タイトルはテキスト -->
+            <h3 class="card-title" id="q-<%= q.id %>-title"><%= q.title %></h3>
+            <div class="meta-line">
+              <small class="author">作成者: <%= q.user&.name || "不明" %></small>
+              <small class="dot">•</small>
+              <small class="time"><%= time_ago_in_words(q.created_at) %> 前</small>
+            </div>
+          </div>
+
+          <!-- ブックマーク領域（右上） -->
+          <div class="bookmark-area">
+            <% if user_signed_in? %>
+              <% bookmarked = current_user.respond_to?(:bookmarked?) && current_user.bookmarked?(q) %>
+              <% if bookmarked %>
+                <%= button_to '★', question_bookmark_path(q), method: :delete, class: 'bookmark-btn', form: { data: { turbo: false } } %>
+              <% else %>
+                <%= button_to '☆', question_bookmarks_path(q), method: :post, class: 'bookmark-btn', form: { data: { turbo: false } } %>
+              <% end %>
+            <% else %>
+              <%= link_to '☆', new_user_session_path, class: 'bookmark-btn ghost', title: 'ログインしてブックマーク' %>
+            <% end %>
+          </div>
+        </header>
+
+        <div class="card-body">
+          <p class="excerpt"><%= truncate(strip_tags(q.description.to_s), length: 220) %></p>
         </div>
-      </footer>
-    </article>
-  <% end %>
-</div>
+      </article>
+    <% end %>
+  </div>
+</section>
 
 <style>
-.category-header { border-bottom:1px solid #eee; margin-bottom:16px; padding-bottom:12px }
-.breadcrumb { color:#666; font-size:0.9rem; margin-bottom:6px }
-.header-main h1 { margin:0 }
-.header-main .lead { color:#444; margin:6px 0 12px }
-.header-actions { display:flex; gap:8px }
-.btn.large { padding:10px 14px }
-.category-stats { margin:12px 0; color:#555 }
-.question-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap:14px }
-.question-card { border:1px solid #e6e6e6; padding:12px; border-radius:8px; background:#fff }
-.question-card header h3 { margin:0 0 8px 0 }
-.excerpt { color:#333; margin-bottom:10px }
-.meta { display:flex; justify-content:space-between; align-items:center }
-.card-actions { display:flex; gap:8px }
-.btn { padding:6px 10px; border:1px solid #ccc; border-radius:6px; background:#f7f7f7; color:#333; text-decoration:none }
-.btn-primary { background:#2b6cb0; color:#fff; border-color:#2b6cb0 }
+:root{
+  --bg:#0f1724; --card:#ffffff; --muted:#6b7280; --accent:#2563eb;
+}
+*{box-sizing:border-box}
+.container{max-width:1100px;margin:28px auto;padding:0 18px}
+.category-hero{background:linear-gradient(135deg, #f0f7ff 0%, #ffffff 100%);padding:28px 0;border-radius:10px}
+.hero-inner{max-width:1100px;margin:0 auto;padding:18px}
+.breadcrumb{color:var(--muted);font-size:0.9rem;margin-bottom:8px;display:flex;gap:8px;align-items:center}
+.breadcrumb .sep{opacity:.6}
+.hero-main{display:flex;justify-content:space-between;align-items:flex-start;gap:20px}
+.meta{flex:1}
+.title{margin:0;font-size:1.6rem;color:#0b1220}
+.subtitle{margin:8px 0 0;color:var(--muted);max-width:70%}
+.actions{display:flex;gap:10px;align-items:center}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:8px;border:1px solid transparent;text-decoration:none;font-weight:600;cursor:pointer}
+.btn .icon{width:16px;height:16px;opacity:.9}
+.btn.ghost{background:transparent;border-color:rgba(15,23,36,0.06);color:#0b1220}
+.btn.primary{background:var(--accent);color:#fff;box-shadow:0 6px 18px rgba(37,99,235,0.16)}
+.btn.small{padding:6px 10px;font-size:0.9rem}
+.stats{display:flex;justify-content:flex-end;margin:14px 0;color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px}
+.card{background:var(--card);border-radius:10px;padding:16px;box-shadow:0 6px 18px rgba(12,18,28,0.06);display:flex;flex-direction:column;min-height:180px;transition:transform .12s,box-shadow .12s}
+.card:hover{transform:translateY(-6px);box-shadow:0 10px 30px rgba(12,18,28,0.08)}
+.card-head{display:flex;gap:12px;align-items:center;margin-bottom:8px}
+.avatar{width:44px;height:44px;border-radius:50%;background:#eef2ff;color:var(--accent);display:flex;align-items:center;justify-content:center;font-weight:700}
+.card-title{margin:0;font-size:1.05rem}
+.meta-line{display:flex;gap:8px;color:var(--muted);font-size:0.85rem;margin-top:6px}
+.card-body{flex:1;margin:8px 0;color:#111827}
+.excerpt{margin:0}
+.card-foot{display:flex;justify-content:flex-end;margin-top:12px}
+
+/* カード全体をクリック可能にする（show 用） */
+.link-card { position: relative; cursor: pointer; }
+.card-overlay {
+  position: absolute; inset: 0; display: block; border-radius: 10px;
+  z-index: 5; background: transparent;
+}
+.card-overlay:focus { outline: none; }
+.card-overlay:focus-visible { outline: 3px solid rgba(37,99,235,0.6); border-radius: 10px; }
+
+/* ブックマークボタンのスタイル（カードオーバーレイより上に配置） */
+.bookmark-area{position:relative; z-index: 20; margin-left: auto; display:flex; align-items:flex-start}
+.bookmark-btn{
+  background:transparent;
+  border:none;
+  font-size:1.1rem;
+  padding:6px 8px;
+  cursor:pointer;
+  color:#f59e0b; /* 星色 */
+  text-decoration:none;
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  border-radius:8px;
+}
+.bookmark-btn.ghost{color:var(--muted); text-decoration:none}
+.bookmark-btn:hover{transform:scale(1.05)}
+
+/* card-overlay の z-index は 5 のまま、bookmark-area は 20 で上に出す */
+.card-overlay { z-index: 5; }
+.card-head, .card-body { position: relative; z-index: 10; }
+
+@media (max-width:700px){
+  .hero-main{flex-direction:column;align-items:flex-start}
+  .subtitle{max-width:100%}
+}
 </style>

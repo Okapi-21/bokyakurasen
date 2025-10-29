@@ -11,11 +11,17 @@ class QuestionsController < ApplicationController
     end
 
     def new
-        @question = current_user.questions.build
+                @question = current_user.questions.build
         3.times do
             child = @question.children.build(user: current_user)
             4.times { child.choices.build }
         end
+                # If a category_id is provided (from categories listing), pre-associate it
+                if params[:category_id].present?
+                    cat = Category.find_by(id: params[:category_id])
+                    @question.category_ids = [cat.id] if cat
+                    @selected_category = cat
+                end
     end
 
     def create
@@ -162,6 +168,7 @@ class QuestionsController < ApplicationController
     def question_params
         params.require(:question).permit(
             :title, :description,
+            category_ids: [],
             children_attributes: [
               :id, :title, :description, :explanation,
                 choices_attributes: [ :id, :content, :is_correct, :_destroy ]
