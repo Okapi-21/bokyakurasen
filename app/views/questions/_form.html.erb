@@ -10,6 +10,13 @@
     <%= f.label :description, "説明", class: "block font-semibold text-gray-700 mb-1" %>
     <%= f.text_area :description, class: "w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-300 box-border" %>
   </div>
+  <%# カテゴリ選択：単一選択のドロップダウンだが配列として送る(name ending with []）ことで controller は category_ids: [] を受け取れるようにする %>
+  <div class="mb-6">
+    <%= f.label :category_ids, "カテゴリ", class: "block font-semibold text-gray-700 mb-1" %>
+    <% selected = @selected_category&.id || @question.category_ids&.first %>
+    <%= select_tag 'question[category_ids][]', options_from_collection_for_select(Category.all, :id, :name, selected), include_blank: '選択してください', class: "w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-300 box-border" %>
+    <p class="text-sm text-gray-500 mt-1">カテゴリを選択してください（複数カテゴリに紐づけたい場合は管理画面で編集してください）</p>
+  </div>
 
   <h2 class="text-xl font-bold mb-4 text-purple-600">問題</h2>
   <%= f.fields_for :children do |cf| %>
