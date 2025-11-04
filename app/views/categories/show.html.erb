@@ -33,9 +33,7 @@
   <div class="grid">
     <% @questions.each do |q| %>
       <article class="card link-card" aria-labelledby="q-<%= q.id %>-title">
-        <!-- カード全体クリックで問題解答を開始 -->
-        <%= link_to start_question_path(q, category_id: @category.id), class: 'card-overlay', aria: { label: "#{q.title} を開始" } do %><% end %>
-
+        <!-- カード本文（作成者/日時より下）クリックで問題解答を開始 -->
         <header class="card-head">
           <div class="avatar"><%= q.user&.name.to_s[0]&.upcase || "?" %></div>
           <div class="head-info">
@@ -51,11 +49,12 @@
           <!-- ブックマーク領域（右上） -->
           <div class="bookmark-area">
             <% if user_signed_in? %>
+              <%# ブックマーク表示/操作 %>
               <% bookmarked = current_user.respond_to?(:bookmarked?) && current_user.bookmarked?(q) %>
               <% if bookmarked %>
-                <%= button_to '★', question_bookmark_path(q), method: :delete, class: 'bookmark-btn', form: { data: { turbo: false } } %>
+                <%= button_to '★', question_bookmark_path(q, category_id: @category.id), method: :delete, class: 'bookmark-btn', form: { data: { turbo: false } } %>
               <% else %>
-                <%= button_to '☆', question_bookmarks_path(q), method: :post, class: 'bookmark-btn', form: { data: { turbo: false } } %>
+                <%= button_to '☆', question_bookmarks_path(q, category_id: @category.id), method: :post, class: 'bookmark-btn', form: { data: { turbo: false } } %>
               <% end %>
             <% else %>
               <%= link_to '☆', new_user_session_path, class: 'bookmark-btn ghost', title: 'ログインしてブックマーク' %>
@@ -64,8 +63,28 @@
         </header>
 
         <div class="card-body">
-          <p class="excerpt"><%= truncate(strip_tags(q.description.to_s), length: 220) %></p>
+          <!-- 本文全体をリンク化（ヘッダより下のみが遷移対象） -->
+          <%= link_to start_question_path(q, category_id: @category.id), class: 'body-overlay', aria: { label: "#{q.title} を開始" } do %>
+            <p class="excerpt"><%= truncate(strip_tags(q.description.to_s), length: 220) %></p>
+          <% end %>
         </div>
+
+        <!-- 編集・削除ボタン（説明文の下に表示、ボタン形式に変更） -->
+        <% if user_signed_in? && q.user && current_user.id == q.user.id %>
+          <div class="owner-actions owner-actions-below">
+            <%= button_to edit_question_path(q, category_id: @category.id), method: :get, class: 'action-btn edit' do %>
+              編集
+            <% end %>
+
+            <%= button_to question_path(q, category_id: @category.id),
+                  method: :delete,
+                  data: { confirm: '本当にこの問題を削除しますか？' },
+                  class: 'action-btn delete',
+                  form: { data: { turbo: false } } do %>
+              削除
+            <% end %>
+          </div>
+        <% end %>
       </article>
     <% end %>
   </div>
@@ -103,39 +122,78 @@
 .excerpt{margin:0}
 .card-foot{display:flex;justify-content:flex-end;margin-top:12px}
 
-/* カード全体をクリック可能にする（show 用） */
-.link-card { position: relative; cursor: pointer; }
-.card-overlay {
-  position: absolute; inset: 0; display: block; border-radius: 10px;
-  z-index: 5; background: transparent;
-}
-.card-overlay:focus { outline: none; }
-.card-overlay:focus-visible { outline: 3px solid rgba(37,99,235,0.6); border-radius: 10px; }
+/* 以前の .card-overlay を削除し、本文リンク用のスタイルを追加 */
+.link-card { position: relative; cursor: default; }
 
-/* ブックマークボタンのスタイル（カードオーバーレイより上に配置） */
-.bookmark-area{position:relative; z-index: 20; margin-left: auto; display:flex; align-items:flex-start}
-.bookmark-btn{
-  background:transparent;
-  border:none;
-  font-size:1.1rem;
-  padding:6px 8px;
-  cursor:pointer;
-  color:#f59e0b; /* 星色 */
-  text-decoration:none;
-  display:inline-flex;
-  align-items:center;
-  gap:6px;
-  border-radius:8px;
-}
-.bookmark-btn.ghost{color:var(--muted); text-decoration:none}
-.bookmark-btn:hover{transform:scale(1.05)}
+/* ヘッダはオーバーレイより上に表示（クリック不可） */
+.card-head { position: relative; z-index: 30; }
 
-/* card-overlay の z-index は 5 のまま、bookmark-area は 20 で上に出す */
-.card-overlay { z-index: 5; }
-.card-head, .card-body { position: relative; z-index: 10; }
+/* 本文部分を相対配置してリンクを全面にする */
+.card-body { position: relative; z-index: 10; }
+
+/* 本文内のリンク（クリックで遷移） */
+.body-overlay {
+  position: absolute;
+  inset: 0;
+  display: block;
+  border-radius: 10px;
+  background: transparent;
+  z-index: 10;
+  text-decoration: none;
+  color: inherit;
+}
+
+/* ブックマークはヘッダの上で常にクリック可能 */
+.bookmark-area { position: relative; z-index: 40; }
+
+/* 他の要素が本文リンクに被らないよう調整 */
+.card-head, .card-body > * { position: relative; z-index: 20; }
 
 @media (max-width:700px){
   .hero-main{flex-direction:column;align-items:flex-start}
   .subtitle{max-width:100%}
+}
+
+/* モダンな編集・削除ボタン */
+.owner-actions{display:flex;gap:8px;align-items:center}
+.action-btn{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:6px 10px;
+  border-radius:10px;
+  font-weight:600;
+  font-size:0.92rem;
+  text-decoration:none;
+  border:1px solid transparent;
+  cursor:pointer;
+  transition:transform .08s, box-shadow .08s;
+}
+.action-btn .icon{width:16px;height:16px;opacity:0.95}
+
+/* 編集（アウトライン） */
+.action-btn.edit{
+  background:transparent;
+  color:var(--accent);
+  border-color:rgba(37,99,235,0.12);
+  box-shadow: none;
+}
+.action-btn.edit:hover{ transform:translateY(-2px); box-shadow:0 6px 16px rgba(37,99,235,0.06) }
+
+/* 削除（アクセント） */
+.action-btn.delete{
+  background:#fee2e2;
+  color:#b91c1c;
+  border-color:rgba(185,28,28,0.06);
+}
+.action-btn.delete:hover{ transform:translateY(-2px); box-shadow:0 8px 22px rgba(185,28,28,0.06) }
+
+/* button_to で生成される form 内のボタン表示を調整 */
+form[action][method] > .action-btn { display:inline-flex; border:none; background:transparent; padding:0; }
+
+/* 余白崩れ防止（小画面対応） */
+@media (max-width:600px){
+  .owner-actions{gap:6px}
+  .action-btn{padding:6px 8px;font-size:0.88rem}
 }
 </style>

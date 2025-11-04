@@ -31,7 +31,7 @@ class QuestionsController < ApplicationController
             child.parent = @question
         end
         if @question.save
-            redirect_to questions_path, success: "問題の作成に成功しました"
+            redirect_to categories_path, success: "問題の作成に成功しました"
         else
             render :new, status: :unprocessable_entity
         end
@@ -44,7 +44,7 @@ class QuestionsController < ApplicationController
     def update
         @question = current_user.questions.find(params[:id])
         if @question.update(question_params)
-            redirect_to questions_path, success: "問題を更新しました"
+            redirect_to categories_path, success: "問題を更新しました"
         else
             render :edit
         end
@@ -52,8 +52,17 @@ class QuestionsController < ApplicationController
 
     def destroy
         @question = current_user.questions.find(params[:id])
+        target =
+          if params[:category_id].present?
+            category_path(params[:category_id])
+          elsif @question.categories.any?
+            category_path(@question.categories.first)
+          else
+            questions_path
+          end
+
         @question.destroy!
-        redirect_to questions_path, success: "問題を削除しました"
+        redirect_to target, success: "問題を削除しました"
     end
 
     def bookmarks
