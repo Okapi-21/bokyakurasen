@@ -9,11 +9,17 @@
 # - This script will NOT create users in production.
 # - Always backup DB before running.
 
-ADMIN_EMAIL = ENV['ADMIN_EMAIL']
-raise "Set ADMIN_EMAIL in env before running seeds in production" unless ADMIN_EMAIL.present?
+ADMIN_ID    = ENV['ADMIN_ID']&.presence
+ADMIN_EMAIL = ENV['ADMIN_EMAIL']&.presence
 
-admin = User.find_by(email: ADMIN_EMAIL)
-raise "Admin user not found: #{ADMIN_EMAIL}" unless admin
+if ADMIN_ID
+  admin = User.find_by(id: ADMIN_ID.to_i)
+  raise "Admin user not found with id=#{ADMIN_ID}" unless admin
+else
+  raise "Set ADMIN_ID or ADMIN_EMAIL in env before running seeds in production" unless ADMIN_EMAIL
+  admin = User.find_by(email: ADMIN_EMAIL)
+  raise "Admin user not found: #{ADMIN_EMAIL}" unless admin
+end
 
 puts "Running production seeds as: #{admin.email} (id=#{admin.id})"
 
