@@ -25,20 +25,35 @@
   </nav>
 </header>
 
-<!--ハンバーガーメニューを一時的に実装しているが、クリックをしても表示されたり、表示されなかったりすることがあるので修正が必要-->
 <script>
-  document.addEventListener("DOMContentLoaded", function() {
+  // Turbo 対応：DOMContentLoaded に加えて turbo:load / turbo:render で初期化
+  function initHamburgerMenu() {
     const btn = document.getElementById("menu-button");
     const menu = document.getElementById("mobile-menu");
+
+    if (!btn || !menu) return; // 要素がない場合は処理しない
+
+    // 既存のリスナーを避けるため、一度だけ登録（data属性でフラグ管理）
+    if (btn.dataset.listenerAttached === "true") return;
+    btn.dataset.listenerAttached = "true";
+
     btn.addEventListener("click", function(event) {
       menu.classList.toggle("hidden");
       event.stopPropagation();
     });
+
     // メニュー以外をクリックしたら非表示
     document.addEventListener("click", function(e) {
       if (!menu.contains(e.target) && !btn.contains(e.target)) {
         menu.classList.add("hidden");
       }
     });
-  });
+  }
+
+  // 初回読み込み
+  document.addEventListener("DOMContentLoaded", initHamburgerMenu);
+
+  // Turbo による画面遷移後も再初期化
+  document.addEventListener("turbo:load", initHamburgerMenu);
+  document.addEventListener("turbo:render", initHamburgerMenu);
 </script>
